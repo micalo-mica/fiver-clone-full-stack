@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { AiOutlineSearch } from "react-icons/ai";
 import HorImg from "../assets/mman.png";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const H = styled.div`
   width: 100%;
@@ -203,6 +205,13 @@ const Image = styled.img`
 `;
 
 function Hero() {
+  const [input, setInput] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    navigate(`/gigs?search=${input}`);
+  };
+
   return (
     <H>
       <HContainer>
@@ -211,9 +220,13 @@ function Hero() {
           <InputContainer>
             <SearchContainer>
               <SearchIcon />
-              <Input type="text" placeholder="search" />
+              <Input
+                type="text"
+                placeholder="search"
+                onChange={(e) => setInput(e.target.value)}
+              />
             </SearchContainer>
-            <SearchBtn>search</SearchBtn>
+            <SearchBtn onClick={handleSubmit}>search</SearchBtn>
           </InputContainer>
         </Left>
         <Right>

@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import moment from "moment";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import newRequest from "../helper/newRequest";
 
 const M = styled.div`
   width: 100%;
@@ -23,6 +26,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
   @media (max-width: ${({ theme }) => theme.screens.lg1}) {
   }
   @media (max-width: ${({ theme }) => theme.screens.md}) {
@@ -131,64 +135,78 @@ const MessageBtn = styled.button`
 `;
 
 function Messages() {
-  const currentUser = {
-    id: 1,
-    userName: "Micah",
-    isSeller: true,
-  };
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-  const messages = `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illum reprehenderit unde harum! Corrupti eveniet impedit illum adipisci expedita eligendi aperiam?`;
+  const queryClient = useQueryClient();
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: () =>
+      newRequest.get(`/conversations`).then((res) => {
+        return res.data;
+      }),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (id) => {
+      return newRequest.put(`/conversations/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["conversations"]);
+    },
+  });
+
+  const handleRead = (id) => {
+    mutation.mutate(id);
+  };
 
   return (
     <M>
-      <Container>
-        <Title>
-          <TitleText>My Gigs</TitleText>
-        </Title>
-        <TableContainer>
-          <Table>
-            <Tr>
-              <Th>Buyer</Th>
-              <Th>Last Message</Th>
-              <Th>Date</Th>
-              <Th>Action</Th>
-            </Tr>
-            {/* Row Table */}
-            <Tr active="active">
-              <Td big="true">Micah</Td>
-              <Td>
-                <Link to="/message/124">{messages.substring(0, 10)}...</Link>
-              </Td>
-              <Td>2 day ago</Td>
-              <Td>
-                <MessageBtn>Mark as read</MessageBtn>
-              </Td>
-            </Tr>
-            {/* Row Table */}
-            <Tr active="active">
-              <Td big="true">Micah</Td>
-              <Td>
-                <Link to="/message/124">{messages.substring(0, 10)}...</Link>
-              </Td>
-              <Td>2 day ago</Td>
-              <Td>
-                <MessageBtn>Mark as read</MessageBtn>
-              </Td>
-            </Tr>
-            {/* Row Table */}
-            <Tr active="active">
-              <Td big="true">Micah</Td>
-              <Td>
-                <Link to="/message/124">{messages.substring(0, 10)}...</Link>
-              </Td>
-              <Td>2 day ago</Td>
-              <Td>
-                <MessageBtn>Mark as read</MessageBtn>
-              </Td>
-            </Tr>
-          </Table>
-        </TableContainer>
-      </Container>
+      {isLoading ? (
+        "isLoading..."
+      ) : error ? (
+        "Error"
+      ) : (
+        <Container>
+          <Title>
+            <TitleText>My Gigs</TitleText>
+          </Title>
+          <TableContainer>
+            <Table>
+              <Tr>
+                <Th>Buyer</Th>
+                <Th>Last Message</Th>
+                <Th>Date</Th>
+                <Th>Action</Th>
+              </Tr>
+              {/* Row Table */}
+              {data &&
+                data.map((c) => (
+                  // <Tr active="active" key={c.id}>
+                  <Tr active="active" key={c.id}>
+                    <Td big="true">
+                      {currentUser.isSeller ? c.buyerId : c.sellerId}
+                    </Td>
+                    <Td>
+                      <Link to={`/message/${c.id}`}>
+                        {c.lastMessage?.substring(0, 10)}...
+                      </Link>
+                    </Td>
+                    <Td>{moment(c.updatedAt).fromNow()}</Td>
+                    <Td>
+                      {((currentUser.isSeller && !c.readBySeller) ||
+                        (!currentUser.isSeller && !c.readByBuyer)) && (
+                        <MessageBtn onClick={() => handleRead(c.id)}>
+                          Mark as read
+                        </MessageBtn>
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
+            </Table>
+          </TableContainer>
+        </Container>
+      )}
     </M>
   );
 }

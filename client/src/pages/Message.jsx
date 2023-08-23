@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { BiArrowBack } from "react-icons/bi";
 import Pro from "../assets/pro.png";
+import moment from "moment";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import newRequest from "../helper/newRequest";
 
 const M = styled.div`
   width: 100%;
@@ -130,7 +133,7 @@ const Hr = styled.hr`
 `;
 
 // =============
-const WriteContainer = styled.div`
+const Form = styled.form`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -176,6 +179,37 @@ const SendBtn = styled.button`
 `;
 
 function Message() {
+  const { id } = useParams();
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const queryClient = useQueryClient();
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["messages"],
+    queryFn: () =>
+      newRequest.get(`/messages/${id}`).then((res) => {
+        return res.data;
+      }),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (message) => {
+      return newRequest.post(`/messages`, message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["messages"]);
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    mutation.mutate({
+      conversationId: id,
+      desc: e.target[0].value,
+    });
+    e.target[0].value = "";
+  };
+
   return (
     <M>
       <Container>
@@ -184,28 +218,27 @@ function Message() {
             <BackIcon />
           </Link>
         </Back>
-        <MessagesContainer>
-          {/*  */}
-          <MessagesContainerItems>
-            <Image src={Pro} />
-            <MessageText>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident
-              sapiente illo ipsa? Quibusdam, ab harum.
-            </MessageText>
-          </MessagesContainerItems>
-          {/*  owner*/}
-          <MessagesContainerItems owner="true">
-            <Image src={Pro} />
-            <MessageText owner="true">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident
-              sapiente illo ipsa? Quibusdam, ab harum.
-            </MessageText>
-          </MessagesContainerItems>
-        </MessagesContainer>
+        {isLoading ? (
+          "loading..."
+        ) : error ? (
+          "error"
+        ) : (
+          <MessagesContainer>
+            {data.map((m) => (
+              <MessagesContainerItems
+                owner={m.userId === currentUser._id ? true : false}
+                key={m._id}
+              >
+                <Image src={Pro} />
+                <MessageText owner="true">{m.desc}</MessageText>
+              </MessagesContainerItems>
+            ))}
+          </MessagesContainer>
+        )}
         {/* hr */}
         <Hr />
         {/* message input */}
-        <WriteContainer>
+        <Form onSubmit={handleSubmit}>
           <TextArea
             name=""
             placeholder="write a message"
@@ -213,8 +246,8 @@ function Message() {
             cols="30"
             rows="10"
           ></TextArea>
-          <SendBtn>Send</SendBtn>
-        </WriteContainer>
+          <SendBtn type="submit">Send</SendBtn>
+        </Form>
       </Container>
     </M>
   );

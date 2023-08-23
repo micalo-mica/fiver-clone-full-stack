@@ -2,6 +2,11 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import pic from "../assets/mman.png";
 import { AiTwotoneDelete } from "react-icons/ai";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import newRequest from "../helper/newRequest";
+import getCurrentUser from "../helper/getCurrentUser";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
 
 const M = styled.div`
   width: 100%;
@@ -135,59 +140,74 @@ const DeleteIcon = styled(AiTwotoneDelete)`
 `;
 
 function MyGigs() {
+  // const { user } = useContext(AuthContext);
+
+  const currentUser = getCurrentUser();
+
+  const queryClient = useQueryClient();
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["myGigs"],
+    queryFn: () =>
+      newRequest.get(`/gigs?userId=${currentUser.id}`).then((res) => {
+        return res.data;
+      }),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (id) => {
+      return newRequest.delete(`/gigs/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["myGigs"]);
+    },
+  });
+
+  const handleDelete = (id) => {
+    mutation.mutate(id);
+  };
+
   return (
     <M>
-      <Container>
-        <Title>
-          <TitleText>My Gigs</TitleText>
-          <Link to="/add">
-            <TitleBtn>Add new gig</TitleBtn>
-          </Link>
-        </Title>
-        <TableContainer>
-          <Table>
-            <Tr>
-              <Th>image</Th>
-              <Th>title</Th>
-              <Th>sales</Th>
-              <Th>action</Th>
-            </Tr>
-            <Tr>
-              <Td>
-                <Image src={pic} />
-              </Td>
-              <Td>Gig1</Td>
-              <Td>88</Td>
-              <Td>123</Td>
-              <Td>
-                <DeleteIcon />
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <Image src={pic} />
-              </Td>
-              <Td>Gig1</Td>
-              <Td>88</Td>
-              <Td>123</Td>
-              <Td>
-                <DeleteIcon />
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <Image src={pic} />
-              </Td>
-              <Td>Gig1</Td>
-              <Td>88</Td>
-              <Td>123</Td>
-              <Td>
-                <DeleteIcon />
-              </Td>
-            </Tr>
-          </Table>
-        </TableContainer>
-      </Container>
+      {isLoading ? (
+        "loading"
+      ) : error ? (
+        "error"
+      ) : (
+        <Container>
+          <Title>
+            <TitleText>My Gigs</TitleText>
+            {currentUser.isSeller && (
+              <Link to="/add">
+                <TitleBtn>Add new gig</TitleBtn>
+              </Link>
+            )}
+          </Title>
+          <TableContainer>
+            <Table>
+              <Tr>
+                <Th>image</Th>
+                <Th>title</Th>
+                <Th>sales</Th>
+                <Th>action</Th>
+              </Tr>
+              {data.map((gig) => (
+                <Tr key={gig._id}>
+                  <Td>
+                    <Image src={gig.cover} />
+                  </Td>
+                  <Td>Gig1</Td>
+                  <Td>88</Td>
+                  <Td>123</Td>
+                  <Td>
+                    <DeleteIcon onClick={() => handleDelete(gig._id)} />
+                  </Td>
+                </Tr>
+              ))}
+            </Table>
+          </TableContainer>
+        </Container>
+      )}
     </M>
   );
 }

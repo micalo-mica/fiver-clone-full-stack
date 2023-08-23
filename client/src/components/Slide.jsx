@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
 import ReactSimplyCarousel from "react-simply-carousel";
-import PropertyDetailCard from "../../../../Aztech/client/src/components/forPropertyDetail/PropertyDetailCard";
 import SliderCard from "./SliderCard";
 import { projects } from "../static/sli";
 

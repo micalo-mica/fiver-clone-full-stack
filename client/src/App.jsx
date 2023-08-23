@@ -20,9 +20,11 @@ import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ActivateUser from "./pages/ActivateUser.jsx";
 import PutNewPassword from "./pages/PutNewPassword.jsx";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { QueryClient, QueryClientProvider } from "react-query";
+import Pay from "./pages/Pay.jsx";
+import Success from "./pages/Success.jsx";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +96,14 @@ const router = createBrowserRouter([
       {
         path: "/putNewPassword",
         element: <PutNewPassword />,
+      },
+      {
+        path: "/pay/:id",
+        element: <Pay />,
+      },
+      {
+        path: "/success",
+        element: <Success />,
       },
     ],
   },

@@ -468,124 +468,122 @@ function Gig() {
 
   return (
     <G>
-      <Container>
-        <Left>
-          {/* user */}
-          <UserContainer>
-            <UserImg src={Pro} />
-            <UserName>Micah</UserName>
-            {/* 
+      {isLoading ? (
+        "loading"
+      ) : error ? (
+        "Something went wrong!"
+      ) : (
+        <Container>
+          <Left>
+            {/* user */}
+            <UserContainer>
+              <UserImg src={Pro} />
+              <UserName>Micah</UserName>
+              {/* 
             the code below will calculate the star and star number
             */}
-            {/* {!isNaN(data.totalStars / data.starNumber) && (
-              <StarContainer>
-                {Array(Math.round(data.totalStars / data.starNumber))
-                  .fill()
-                  .map((item, i) => (
-                    <StarIcon key={i} />
-                  ))}
-                <span>{Math.round(data.totalStars / data.starNumber)}</span>
-              </StarContainer>
-            )} */}
-            {/* ===================================== */}
-            {/* then remove the code below */}
-            <StarContainer>
-              <StarIcon />
-              <StarIcon />
-            </StarContainer>
-            <UserStarNumb>4</UserStarNumb>
-          </UserContainer>
-          {/* slider */}
-          <SliderContainers>
-            <UseableSlid slidesToShow="1" arrowsScroll="1">
-              {projects &&
-                projects.map((project) => (
-                  <SliderContainer key={project.id}>
-                    <Image src={project.img} />
+              {!isNaN(data.totalStars / data.starNumber) && (
+                <StarContainer>
+                  {Array(Math.round(data.totalStars / data.starNumber))
+                    .fill()
+                    .map((item, i) => (
+                      <StarIcon key={i} />
+                    ))}
+                  <span>{Math.round(data.totalStars / data.starNumber)}</span>
+                </StarContainer>
+              )}
+              {/* ===================================== */}
+            </UserContainer>
+            {/* slider */}
+            <SliderContainers>
+              <UseableSlid slidesToShow="1" arrowsScroll="1">
+                {data.images.map((img) => (
+                  <SliderContainer key={img}>
+                    <Image key={img} src={img} alt="" />
                   </SliderContainer>
                 ))}
-            </UseableSlid>
-          </SliderContainers>
-          {/* disc */}
-          <GigTi>About This Gig</GigTi>
-          <Disc>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae
-            nobis cumque quaerat tenetur perferendis, totam id! Nulla
-            repudiandae fugit sed.
-          </Disc>
-          {/* seller */}
-          <Seller>
-            <SellerTitle>About Seller</SellerTitle>
-            <SellerUser>
-              <SellerImg src={Pro} />
-              <SellerInfo>
-                <SellerName>Micah</SellerName>
-                <SellerStar>
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                </SellerStar>
-                <SellerBtn>Cantact Me</SellerBtn>
-              </SellerInfo>
-            </SellerUser>
-            {/* Box */}
-            <SellerBox>
-              <BoxItems>
-                {/* singleBox */}
-                <BoxItem>
-                  <BoxItemSpan>From</BoxItemSpan>
-                  <BoxItemSpan>Nigeria</BoxItemSpan>
-                </BoxItem>
-                {/* singleBox */}
-                <BoxItem>
-                  <BoxItemSpan>From</BoxItemSpan>
-                  <BoxItemSpan>Nigeria</BoxItemSpan>
-                </BoxItem>
-                {/* singleBox */}
-                <BoxItem>
-                  <BoxItemSpan>From</BoxItemSpan>
-                  <BoxItemSpan>Nigeria</BoxItemSpan>
-                </BoxItem>
-                {/* singleBox */}
-                <BoxItem>
-                  <BoxItemSpan>From</BoxItemSpan>
-                  <BoxItemSpan>Nigeria</BoxItemSpan>
-                </BoxItem>
-              </BoxItems>
-              <BoxPText>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Molestiae nobis cumque quaerat tenetur perferendis, totam id!
-                Nulla repudiandae fugit sed.
-              </BoxPText>
-            </SellerBox>
-          </Seller>
-          {/* the code below is when gig id is passed */}
-          {/* <Reviews gigId={id} /> */}
-          <Reviews />
-        </Left>
-        <Right>
-          <PriceContainer>
-            <PriceSmallText>I agree to pay</PriceSmallText>
-            <Price>566660</Price>
-          </PriceContainer>
-          <PriceBigText>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
-          </PriceBigText>
-          <PriceDown>
-            <PriceDownSpan>4 days delivery</PriceDownSpan>
-            <PriceDownSpan>3 rating</PriceDownSpan>
-          </PriceDown>
-          {/* 
+              </UseableSlid>
+            </SliderContainers>
+            {/* disc */}
+            <GigTi>About This Gig</GigTi>
+            <Disc>{data.desc}</Disc>
+            {/* seller */}
+            {isLoadingUser ? (
+              "loading"
+            ) : errorUser ? (
+              "Something went wrong!"
+            ) : (
+              <Seller>
+                <SellerTitle>About Seller</SellerTitle>
+                <SellerUser>
+                  <SellerImg src={dataUser.img || Pro} />
+                  <SellerInfo>
+                    <SellerName>Micah</SellerName>
+                    <SellerStar>
+                      <StarIcon />
+                      <StarIcon />
+                      <StarIcon />
+                    </SellerStar>
+                    <SellerBtn>Cantact Me</SellerBtn>
+                  </SellerInfo>
+                </SellerUser>
+                {/* Box */}
+                <SellerBox>
+                  <BoxItems>
+                    {/* singleBox */}
+                    <BoxItem>
+                      <BoxItemSpan>From</BoxItemSpan>
+                      <BoxItemSpan>Nigeria</BoxItemSpan>
+                    </BoxItem>
+                    {/* singleBox */}
+                    <BoxItem>
+                      <BoxItemSpan>From</BoxItemSpan>
+                      <BoxItemSpan>Nigeria</BoxItemSpan>
+                    </BoxItem>
+                    {/* singleBox */}
+                    <BoxItem>
+                      <BoxItemSpan>From</BoxItemSpan>
+                      <BoxItemSpan>Nigeria</BoxItemSpan>
+                    </BoxItem>
+                    {/* singleBox */}
+                    <BoxItem>
+                      <BoxItemSpan>From</BoxItemSpan>
+                      <BoxItemSpan>Nigeria</BoxItemSpan>
+                    </BoxItem>
+                  </BoxItems>
+                  <BoxPText>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Molestiae nobis cumque quaerat tenetur perferendis, totam
+                    id! Nulla repudiandae fugit sed.
+                  </BoxPText>
+                </SellerBox>
+              </Seller>
+            )}
+            {/* the code below is when gig id is passed */}
+            <Reviews gigId={id} />
+          </Left>
+          <Right>
+            <PriceContainer>
+              <PriceSmallText>I agree to pay</PriceSmallText>
+              <Price>566660</Price>
+            </PriceContainer>
+            <PriceBigText>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
+            </PriceBigText>
+            <PriceDown>
+              <PriceDownSpan>4 days delivery</PriceDownSpan>
+              <PriceDownSpan>3 rating</PriceDownSpan>
+            </PriceDown>
+            {/* 
           /**
            * the id is from server if the server is on
            */}
-          {/* <Link to={`/pay/${id}`}>
-          <PriceDownBtn>Continue</PriceDownBtn>
-          </Link> */}
-
-          <PriceDownBtn>Continue</PriceDownBtn>
-        </Right>
-      </Container>
+            <Link to={`/pay/${id}`}>
+              <PriceDownBtn>Continue</PriceDownBtn>
+            </Link>
+          </Right>
+        </Container>
+      )}
     </G>
   );
 }

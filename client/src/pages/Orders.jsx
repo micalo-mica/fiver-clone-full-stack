@@ -158,55 +158,42 @@ function Orders() {
 
   return (
     <M>
-      <Container>
-        <Title>
-          <TitleText>My Gigs</TitleText>
-        </Title>
-        <TableContainer>
-          <Table>
-            <Tr>
-              <Th>image</Th>
-              <Th>title</Th>
-              <Th>price</Th>
-              <Th>{currentUser?.isSeller ? "Buyer" : "Seller"}</Th>
-              <Th>contact</Th>
-            </Tr>
-            <Tr>
-              <Td>
-                <Image src={pic} />
-              </Td>
-              <Td>Gig1</Td>
-              <Td>88</Td>
-              <Td>123</Td>
-              <Td>
-                <MessageIcon />
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <Image src={pic} />
-              </Td>
-              <Td>Gig1</Td>
-              <Td>88</Td>
-              <Td>123</Td>
-              <Td>
-                <MessageIcon />
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <Image src={pic} />
-              </Td>
-              <Td>Gig1</Td>
-              <Td>88</Td>
-              <Td>123</Td>
-              <Td>
-                <MessageIcon />
-              </Td>
-            </Tr>
-          </Table>
-        </TableContainer>
-      </Container>
+      {isLoading ? (
+        "loading"
+      ) : error ? (
+        "error"
+      ) : (
+        <Container>
+          <Title>
+            <TitleText>My Gigs</TitleText>
+          </Title>
+          <TableContainer>
+            <Table>
+              <Tr>
+                <Th>image</Th>
+                <Th>title</Th>
+                <Th>price</Th>
+                <Th>{currentUser?.isSeller ? "Buyer" : "Seller"}</Th>
+                <Th>contact</Th>
+              </Tr>
+              {/*  */}
+              {data.map((order) => (
+                <Tr key={order._id}>
+                  <Td>
+                    <Image src={order.img} alt="" />
+                  </Td>
+                  <Td>{order.title}</Td>
+                  <Td>{order.price}</Td>
+                  <Td>123</Td>
+                  <Td>
+                    <MessageIcon onClick={() => handleContact(order)} />
+                  </Td>
+                </Tr>
+              ))}
+            </Table>
+          </TableContainer>
+        </Container>
+      )}
     </M>
   );
 }
